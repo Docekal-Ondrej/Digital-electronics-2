@@ -1,31 +1,31 @@
 
-Led.elf:     file format elf32-avr
+Leds.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  000000f2  2**0
+  0 .data         00000000  00800100  00800100  00000108  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000009e  00000000  00000000  00000054  2**1
+  1 .text         000000b4  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  000000f2  2**0
+  2 .comment      00000030  00000000  00000000  00000108  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000124  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000138  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000020  00000000  00000000  00000164  2**0
+  4 .debug_aranges 00000020  00000000  00000000  00000178  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000006fd  00000000  00000000  00000184  2**0
+  5 .debug_info   000006fd  00000000  00000000  00000198  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000065e  00000000  00000000  00000881  2**0
+  6 .debug_abbrev 0000065e  00000000  00000000  00000895  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000242  00000000  00000000  00000edf  2**0
+  7 .debug_line   0000025e  00000000  00000000  00000ef3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000024  00000000  00000000  00001124  2**2
+  8 .debug_frame  00000024  00000000  00000000  00001154  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000392  00000000  00000000  00001148  2**0
+  9 .debug_str    00000393  00000000  00000000  00001178  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000048  00000000  00000000  000014da  2**0
+ 10 .debug_loc    00000048  00000000  00000000  0000150b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000010  00000000  00000000  00001522  2**0
+ 11 .debug_ranges 00000010  00000000  00000000  00001553  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -66,7 +66,7 @@ Disassembly of section .text:
   70:	de bf       	out	0x3e, r29	; 62
   72:	cd bf       	out	0x3d, r28	; 61
   74:	0e 94 40 00 	call	0x80	; 0x80 <main>
-  78:	0c 94 4d 00 	jmp	0x9a	; 0x9a <_exit>
+  78:	0c 94 58 00 	jmp	0xb0	; 0xb0 <_exit>
 
 0000007c <__bad_interrupt>:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -75,41 +75,62 @@ Disassembly of section .text:
  **********************************************************************/
 int main(void)
 {
-    // Set pin as output in Data Direction Register
-    // DDRB = DDRB or 0010 0000
+    // Green LED at port B
+    // Set pin as output in Data Direction Register...
     DDRB = DDRB | (1<<LED_GREEN);
   80:	25 9a       	sbi	0x04, 5	; 4
-
-    // Set pin LOW in Data Register (LED off)
-    // PORTB = PORTB and 1101 1111
+    // ...and turn LED off in Data Register
     PORTB = PORTB & ~(1<<LED_GREEN);
   82:	2d 98       	cbi	0x05, 5	; 5
-        // Pause several milliseconds
-        _delay_ms(SHORT_DELAY);
 
-        // Invert LED in Data Register
-        // PORTB = PORTB xor 0010 0000
-        PORTB = PORTB ^ (1<<LED_GREEN);
-  84:	90 e2       	ldi	r25, 0x20	; 32
+    // Configure the second LED at port C
+    DDRC = DDRC | (1<<LED_BLUE); 
+  84:	38 9a       	sbi	0x07, 0	; 7
+    PORTC = PORTC & (1<<LED_BLUE);
+  86:	88 b1       	in	r24, 0x08	; 8
+  88:	81 70       	andi	r24, 0x01	; 1
+  8a:	88 b9       	out	0x08, r24	; 8
+    {
+        // Pause several milliseconds
+        _delay_ms(BLINK_DELAY);
+
+        // WRITE YOUR CODE HERE
+         PORTB = PORTB ^ (1<<LED_GREEN);
+  8c:	20 e2       	ldi	r18, 0x20	; 32
+         PORTC = PORTC ^ (1<<LED_BLUE);
+  8e:	91 e0       	ldi	r25, 0x01	; 1
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  86:	ef e3       	ldi	r30, 0x3F	; 63
-  88:	fc e9       	ldi	r31, 0x9C	; 156
-  8a:	31 97       	sbiw	r30, 0x01	; 1
-  8c:	f1 f7       	brne	.-4      	; 0x8a <main+0xa>
-  8e:	00 c0       	rjmp	.+0      	; 0x90 <main+0x10>
-  90:	00 00       	nop
-  92:	85 b1       	in	r24, 0x05	; 5
-  94:	89 27       	eor	r24, r25
-  96:	85 b9       	out	0x05, r24	; 5
-  98:	f6 cf       	rjmp	.-20     	; 0x86 <main+0x6>
+  90:	3f ef       	ldi	r19, 0xFF	; 255
+  92:	49 e6       	ldi	r20, 0x69	; 105
+  94:	88 e1       	ldi	r24, 0x18	; 24
+  96:	31 50       	subi	r19, 0x01	; 1
+  98:	40 40       	sbci	r20, 0x00	; 0
+  9a:	80 40       	sbci	r24, 0x00	; 0
+  9c:	e1 f7       	brne	.-8      	; 0x96 <main+0x16>
+  9e:	00 c0       	rjmp	.+0      	; 0xa0 <main+0x20>
+  a0:	00 00       	nop
+    {
+        // Pause several milliseconds
+        _delay_ms(BLINK_DELAY);
 
-0000009a <_exit>:
-  9a:	f8 94       	cli
+        // WRITE YOUR CODE HERE
+         PORTB = PORTB ^ (1<<LED_GREEN);
+  a2:	85 b1       	in	r24, 0x05	; 5
+  a4:	82 27       	eor	r24, r18
+  a6:	85 b9       	out	0x05, r24	; 5
+         PORTC = PORTC ^ (1<<LED_BLUE);
+  a8:	88 b1       	in	r24, 0x08	; 8
+  aa:	89 27       	eor	r24, r25
+  ac:	88 b9       	out	0x08, r24	; 8
+  ae:	f0 cf       	rjmp	.-32     	; 0x90 <main+0x10>
 
-0000009c <__stop_program>:
-  9c:	ff cf       	rjmp	.-2      	; 0x9c <__stop_program>
+000000b0 <_exit>:
+  b0:	f8 94       	cli
+
+000000b2 <__stop_program>:
+  b2:	ff cf       	rjmp	.-2      	; 0xb2 <__stop_program>
