@@ -104,7 +104,7 @@ int main(void)
 
 
 ### Knight Rider
-
+```c
 int main(void)
 {
     DDRB = DDRB | (1<<LED_5);
@@ -173,7 +173,7 @@ int main(void)
     // Will never reach this
     return 0;
 }
-
+```
 1. Scheme of Knight Rider application, i.e. connection of AVR device, five LEDs, resistors, one push button, and supply voltage. The image can be drawn on a computer or by hand. Always name all components and their values!
 
    ![Picture.](https://github.com/Docekal-Ondrej/Digital-electronics-2/blob/main/Labs/02-leds/Screenshot_1.png)
