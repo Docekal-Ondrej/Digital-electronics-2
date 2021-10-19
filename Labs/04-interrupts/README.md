@@ -64,10 +64,10 @@ ISR(TIMER1_OVF_vect)
     }	
 }
 ```
-   ![Picture.](https://github.com/Docekal-Ondrej/Digital-electronics-2/tree/main/Labs/04-interrupts/LEDinterrupt/Screenshot_1.png)
+   ![Picture.](https://github.com/Docekal-Ondrej/Digital-electronics-2/blob/main/Labs/04-interrupts/Screenshot_1.png)
 
 ### Knight Rider
 
 1. Scheme of Knight Rider application with four LEDs and a push button, connected according to Multi-function shield. Connect AVR device, LEDs, resistors, push button, and supply voltage. The image can be drawn on a computer or by hand. Always name all components and their values.
 
-   ![Picture.](https://github.com/Docekal-Ondrej/Digital-electronics-2/tree/main/Labs/04-interrupts/LEDinterrupt/Screenshot_2.png)
+   ![Picture.](https://github.com/Docekal-Ondrej/Digital-electronics-2/blob/main/Labs/04-interrupts/Screenshot_2.png)
